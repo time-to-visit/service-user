@@ -1,0 +1,1073 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>entry: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">service-user/cmd/entry/user.go (8.3%)</option>
+				
+				<option value="file1">service-user/cmd/handler/user.go (100.0%)</option>
+				
+				<option value="file2">service-user/internal/domain/entity/user.go (66.7%)</option>
+				
+				<option value="file3">service-user/internal/domain/object_values/response.go (100.0%)</option>
+				
+				<option value="file4">service-user/internal/domain/repository/progress.go (27.3%)</option>
+				
+				<option value="file5">service-user/internal/domain/repository/user.go (37.5%)</option>
+				
+				<option value="file6">service-user/internal/domain/usecase/progress.go (100.0%)</option>
+				
+				<option value="file7">service-user/internal/domain/usecase/user.go (61.9%)</option>
+				
+				<option value="file8">service-user/internal/domain/validator/user.go (77.8%)</option>
+				
+				<option value="file9">service-user/internal/infra/cache/client.go (95.8%)</option>
+				
+				<option value="file10">service-user/internal/infra/jwt/client.go (50.0%)</option>
+				
+				<option value="file11">service-user/internal/infra/validation/client.go (86.7%)</option>
+				
+				<option value="file12">service-user/test/mock/ClientRest.go (0.0%)</option>
+				
+				<option value="file13">service-user/test/mock/IRepositoryProgress.go (75.4%)</option>
+				
+				<option value="file14">service-user/test/mock/IRepositoryUser.go (39.5%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package entry
+
+import (
+        "service-user/internal/domain/entity"
+        objectValues "service-user/internal/domain/object_values"
+        "service-user/internal/domain/usecase"
+
+        "github.com/labstack/echo/v4"
+)
+
+type userEntry struct {
+        userCaseuse usecase.UserUseCase
+}
+
+func NewUserEntry(userCaseuse usecase.UserUseCase) *userEntry <span class="cov8" title="1">{
+        return &amp;userEntry{
+                userCaseuse,
+        }
+}</span>
+
+func (u *userEntry) Register(context echo.Context) error <span class="cov0" title="0">{
+        user := context.Get("user-data").(*entity.User)
+        data, status := u.userCaseuse.RegisterUser(*user)
+        return context.JSON(status, data)
+}</span>
+
+func (u *userEntry) Auth(context echo.Context) error <span class="cov0" title="0">{
+        verify := context.Get("verify").(*objectValues.Verify)
+        data, status := u.userCaseuse.LoginUser(*verify)
+        return context.JSON(status, data)
+}</span>
+
+func (u *userEntry) Verify(context echo.Context) error <span class="cov0" title="0">{
+        data, status := u.userCaseuse.VerifyUser(context)
+        return context.JSON(status, data)
+}</span>
+
+func (u *userEntry) SendEmail(context echo.Context) error <span class="cov0" title="0">{
+        return nil
+}</span>
+
+func (u *userEntry) VerifyEmail(context echo.Context) error <span class="cov0" title="0">{
+        return nil
+}</span>
+
+func (u *userEntry) VerifyEmailView(context echo.Context) error <span class="cov0" title="0">{
+        return nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package handler
+
+import (
+        "service-user/cmd/entry"
+        "service-user/internal/domain/usecase"
+        validator "service-user/internal/domain/validator"
+        "service-user/internal/infra/jwt"
+
+        "github.com/labstack/echo/v4"
+        "github.com/labstack/echo/v4/middleware"
+)
+
+func NewHandlerUser(e *echo.Echo, userUseCase usecase.UserUseCase) *echo.Echo <span class="cov8" title="1">{
+        userEntry := entry.NewUserEntry(userUseCase)
+        jwtConf := jwt.NewJwtClient()
+        e.POST("/register", userEntry.Register, validator.ValidateUser)
+        e.POST("/verify", userEntry.Verify, middleware.JWTWithConfig(jwtConf.GetConfig()))
+        e.POST("/auth", userEntry.Auth, validator.ValidateVerify)
+        e.POST("/verify-email", userEntry.VerifyEmail)
+        e.GET("/verify-email", userEntry.VerifyEmailView)
+        e.POST("/send-email", userEntry.SendEmail)
+        return e
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package entity
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type User struct {
+        Model
+        Nombres       string `gorm:"column:nombres;type:varchar(255);not null" json:"nombres" validate:"required"`
+        Apellidos     string `gorm:"column:apellidos;type:varchar(255);not null"  json:"apellidos" validate:"required"`
+        NombreUsuario string `gorm:"column:nombre_usuario;type:varchar(255);not null"  json:"nombre_usuario" validate:"required"`
+        Correo        string `gorm:"column:correo;type:varchar(255);not null; unique"  json:"correo" validate:"required"`
+        Clave         string `gorm:"column:clave;type:varchar(255);not null"  json:"clave,omitempty" validate:"required"`
+        TipoUsuario   string `gorm:"column:tipo_usuario;type:varchar(255);not null"  json:"tipo_usuario" validate:"required"`
+        UrlImagen     string `gorm:"column:url_imagen;type:varchar(255);not null"  json:"-" default:"no tiene"`
+}
+
+type UserWihoutValidate struct {
+        Model
+        Nombres       string `gorm:"column:nombres;type:varchar(255);not null" json:"nombres" validate:"required"`
+        Apellidos     string `gorm:"column:apellidos;type:varchar(255);not null"  json:"apellidos" validate:"required"`
+        NombreUsuario string `gorm:"column:nombre_usuario;type:varchar(255);not null"  json:"nombre_usuario" validate:"required"`
+        Correo        string `gorm:"column:correo;type:varchar(255);not null; unique"  json:"correo" validate:"required"`
+        Clave         string `gorm:"column:clave;type:varchar(255);not null"  json:"clave,omitempty" validate:"required"`
+        TipoUsuario   string `gorm:"column:tipo_usuario;type:varchar(255);not null"  json:"tipo_usuario" validate:"required"`
+        UrlImagen     string `gorm:"column:url_imagen;type:varchar(255);not null"  json:"-" default:"no tiene"`
+}
+
+func (m UserWihoutValidate) TableName() string <span class="cov1" title="1">{
+        return "users"
+}</span>
+
+func (m User) BeforeCreate(tx *gorm.DB) (err error) <span class="cov10" title="2">{
+        m.CreatedAt = time.Now()
+        m.UpdatedAt = time.Now()
+        return
+}</span>
+
+func (m User) BeforeUpdate(tx *gorm.DB) (err error) <span class="cov0" title="0">{
+        m.UpdatedAt = time.Now()
+        return
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package objectValues
+
+type responseWithData struct {
+        StatusCode int         `json:"status_code"`
+        Title      string      `json:"title"`
+        Message    string      `json:"message"`
+        Data       interface{} `json:"data"`
+}
+
+func NewResponseWithData(StatusCode int, Title string, Message string, Data interface{}) responseWithData <span class="cov10" title="7">{
+        return responseWithData{
+                StatusCode,
+                Title,
+                Message,
+                Data,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package repository
+
+import (
+        "service-user/internal/domain/entity"
+
+        "gorm.io/gorm"
+)
+
+type IRepositoryProgress interface {
+        RegisterProgress(progress entity.Progress) (*entity.Progress, error)
+        UpdateProgress(progress entity.Progress) (*entity.Progress, error)
+        FindProgressByUser(idUser uint64) ([]entity.Progress, error)
+        FindProgressByUserAndCategory(idUser uint64, idCategory uint64) (*entity.Progress, error)
+}
+
+func NewRepositoryProgress(db *gorm.DB) IRepositoryProgress <span class="cov1" title="1">{
+        return &amp;repositoryProgress{
+                db,
+        }
+}</span>
+
+type repositoryProgress struct {
+        db *gorm.DB
+}
+
+func (r *repositoryProgress) RegisterProgress(progress entity.Progress) (*entity.Progress, error) <span class="cov10" title="2">{
+        err := r.db.Create(&amp;progress).Error
+        return &amp;progress, err
+}</span>
+func (r *repositoryProgress) UpdateProgress(progress entity.Progress) (*entity.Progress, error) <span class="cov0" title="0">{
+        err := r.db.Save(&amp;progress).Error
+        return &amp;progress, err
+}</span>
+func (r *repositoryProgress) FindProgressByUser(idUser uint64) ([]entity.Progress, error) <span class="cov0" title="0">{
+        var progress []entity.Progress
+        err := r.db.Find(&amp;progress, "user_id = ?", idUser).Error
+        return progress, err
+}</span>
+
+func (r *repositoryProgress) FindProgressByUserAndCategory(idUser uint64, idCategory uint64) (*entity.Progress, error) <span class="cov0" title="0">{
+        var progress entity.Progress
+        err := r.db.First(&amp;progress, "user_id = ? and item_id = ?", idUser, idCategory).Error
+        return &amp;progress, err
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package repository
+
+import (
+        "service-user/internal/domain/entity"
+
+        "gorm.io/gorm"
+)
+
+type IRepositoryUser interface {
+        RegisterUser(user entity.User) (*entity.User, error)
+        UpdateUser(user entity.User) (*entity.User, error)
+        FindUserByEmailAndPassword(email string, pass string) *entity.User
+}
+
+func NewRepositoryUser(db *gorm.DB) IRepositoryUser <span class="cov1" title="1">{
+        return &amp;repositoryUser{
+                db,
+        }
+}</span>
+
+type repositoryUser struct {
+        db *gorm.DB
+}
+
+func (r *repositoryUser) RegisterUser(user entity.User) (*entity.User, error) <span class="cov10" title="2">{
+        err := r.db.Create(&amp;user).Error
+        return &amp;user, err
+}</span>
+
+func (r *repositoryUser) UpdateUser(user entity.User) (*entity.User, error) <span class="cov0" title="0">{
+        err := r.db.Save(&amp;user).Error
+        return &amp;user, err
+
+}</span>
+
+func (r *repositoryUser) FindUserByEmailAndPassword(email string, pass string) *entity.User <span class="cov0" title="0">{
+        var user entity.User
+        r.db.First(&amp;user, "correo = ? and clave = ?", email, pass)
+        return &amp;user
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package usecase
+
+import (
+        "net/http"
+        "service-user/internal/domain/entity"
+        objectValues "service-user/internal/domain/object_values"
+        "service-user/internal/domain/repository"
+)
+
+type ProgressUseCase struct {
+        repoProgress repository.IRepositoryProgress
+}
+
+func NewProgressUseCase(repoProgress repository.IRepositoryProgress) ProgressUseCase <span class="cov10" title="5">{
+        return ProgressUseCase{
+                repoProgress,
+        }
+}</span>
+
+func (u *ProgressUseCase) GenerateProgress(progress entity.Progress) (interface{}, int) <span class="cov7" title="3">{
+        newProgress := new(entity.Progress)
+        var err error
+        actProgress, _ := u.repoProgress.FindProgressByUserAndCategory(uint64(progress.UserID), uint64(progress.ItemID))
+        if actProgress.ID == 0 </span><span class="cov4" title="2">{
+                newProgress, err = u.repoProgress.RegisterProgress(progress)
+        }</span> else<span class="cov1" title="1"> {
+                newProgress, err = u.repoProgress.UpdateProgress(progress)
+        }</span>
+
+        <span class="cov7" title="3">if err != nil </span><span class="cov1" title="1">{
+                return objectValues.NewResponseWithData(http.StatusBadRequest, "error", "hubo un problema al generar progreso", nil), http.StatusBadRequest
+        }</span>
+        <span class="cov4" title="2">return objectValues.NewResponseWithData(http.StatusOK, "ok", "progreso generado exitosamente", newProgress), http.StatusOK</span>
+}
+
+func (u *ProgressUseCase) SeeProgress(userId int) (interface{}, int) <span class="cov4" title="2">{
+        progress, err := u.repoProgress.FindProgressByUser(uint64(userId))
+        if err != nil </span><span class="cov1" title="1">{
+                return objectValues.NewResponseWithData(http.StatusBadRequest,
+                        "error",
+                        "hubo un problema buscando progreso",
+                        nil,
+                ), http.StatusBadRequest
+        }</span>
+        <span class="cov1" title="1">return objectValues.NewResponseWithData(http.StatusOK, "ok", "sucess", progress), http.StatusOK</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package usecase
+
+import (
+        "net/http"
+        "service-user/internal/domain/entity"
+        objectValues "service-user/internal/domain/object_values"
+        "service-user/internal/domain/repository"
+        "service-user/internal/infra/cache"
+        "service-user/internal/infra/jwt"
+
+        jwtC "github.com/golang-jwt/jwt"
+
+        "github.com/labstack/echo/v4"
+)
+
+type UserUseCase struct {
+        repoUser repository.IRepositoryUser
+        jwt      jwt.JwtClient
+        cache    *cache.CacheProvider
+}
+
+func NewUserUserCase(repoUser repository.IRepositoryUser, jwt jwt.JwtClient, cache *cache.CacheProvider) UserUseCase <span class="cov10" title="4">{
+        return UserUseCase{
+                repoUser,
+                jwt,
+                cache,
+        }
+}</span>
+
+func (u *UserUseCase) RegisterUser(user entity.User) (interface{}, int) <span class="cov5" title="2">{
+        newUser, err := u.repoUser.RegisterUser(user)
+        newUser.Clave = ""
+        if err != nil </span><span class="cov1" title="1">{
+                return objectValues.NewResponseWithData(http.StatusBadRequest, "error", "hubo un problema al registrar el usuario", nil), http.StatusBadRequest
+        }</span>
+        <span class="cov1" title="1">return objectValues.NewResponseWithData(http.StatusCreated, "ok", "usuario registrado sastifactoriamente", newUser), http.StatusCreated</span>
+}
+
+func (u *UserUseCase) LoginUser(verify objectValues.Verify) (interface{}, int) <span class="cov0" title="0">{
+        user := u.repoUser.FindUserByEmailAndPassword(verify.Correo, verify.Clave)
+        if user != nil &amp;&amp; user.Correo == verify.Correo </span><span class="cov0" title="0">{
+                token, err := u.jwt.GenerateToken(objectValues.JwtEntity{
+                        Nombres:   user.Nombres,
+                        Apellidos: user.Apellidos,
+                        Id:        user.ID,
+                        Correo:    user.Correo,
+                })
+                if err != nil </span><span class="cov0" title="0">{
+                        return objectValues.NewResponseWithData(http.StatusUnauthorized, "no authorization", "el usuario no es valido", nil), http.StatusUnauthorized
+                }</span>
+                <span class="cov0" title="0">u.cache.Set("token-"+user.Correo, token)
+                return objectValues.NewResponseWithData(http.StatusOK, "ok", "usuario autorizado", map[string]string{
+                        "token": token,
+                }), http.StatusOK</span>
+        }
+        <span class="cov0" title="0">return objectValues.NewResponseWithData(http.StatusUnauthorized, "no authorization", "el usuario no es valido", nil), http.StatusUnauthorized</span>
+}
+
+func (u *UserUseCase) VerifyUser(c echo.Context) (map[string]interface{}, int) <span class="cov5" title="2">{
+        user := c.Get("user").(*jwtC.Token)
+        if user.Valid </span><span class="cov1" title="1">{
+
+                claims := user.Claims.(*objectValues.JwtCustomClaims)
+                byteToken := u.cache.Get("token-" + claims.Correo)
+                if byteToken != nil </span><span class="cov1" title="1">{
+                        return map[string]interface{}{
+                                "valid": true,
+                                "data":  claims,
+                        }, http.StatusOK
+                }</span>
+        }
+        <span class="cov1" title="1">return map[string]interface{}{
+                "valid": false,
+        }, http.StatusUnauthorized</span>
+}
+
+func (u *UserUseCase) ChangePassword() {<span class="cov0" title="0">
+
+}</span>
+
+func (u *UserUseCase) SendRestartEmail() {<span class="cov0" title="0">
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package validator
+
+import (
+        "net/http"
+
+        "service-user/internal/domain/entity"
+        objectValues "service-user/internal/domain/object_values"
+        validatorPer "service-user/internal/infra/validation"
+
+        validatorV "github.com/go-playground/validator/v10"
+
+        "github.com/labstack/echo/v4"
+)
+
+func ValidateUser(next echo.HandlerFunc) echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                v := validatorPer.NewValidator()
+                user := new(entity.User)
+
+                _ = c.Bind(&amp;user)
+                if err := v.Struct(user); err != nil </span><span class="cov8" title="1">{
+                        errs := err.(validatorV.ValidationErrors)
+                        return c.JSON(http.StatusBadRequest, validatorPer.GenerateMessage(v, errs))
+                }</span>
+                <span class="cov0" title="0">c.Set("user-data", user)
+                return next(c)</span>
+        }
+}
+
+func ValidateVerify(next echo.HandlerFunc) echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                v := validatorPer.NewValidator()
+                verify := new(objectValues.Verify)
+
+                _ = c.Bind(&amp;verify)
+                if err := v.Struct(verify); err != nil </span><span class="cov8" title="1">{
+                        errs := err.(validatorV.ValidationErrors)
+                        return c.JSON(http.StatusBadRequest, validatorPer.GenerateMessage(v, errs))
+                }</span>
+                <span class="cov0" title="0">c.Set("verify", verify)
+                return next(c)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package cache
+
+import (
+        "fmt"
+        "sync"
+
+        "github.com/dgraph-io/badger"
+)
+
+var onceCache sync.Once
+var cacheProivder *CacheProvider
+
+type CacheProvider struct {
+        cache *badger.DB
+}
+
+func (r *CacheProvider) InitDB() (*badger.DB, error) <span class="cov1" title="1">{
+        opts := badger.DefaultOptions("")
+        opts.Dir = "data/cache"
+        opts.ValueDir = "data/cache"
+        kv, err := badger.Open(opts)
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov1" title="1">return kv, nil</span>
+}
+
+func (r *CacheProvider) Get(key string) []byte <span class="cov1" title="1">{
+        var data []byte
+        r.cache.View(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                item, err := txn.Get([]byte(key))
+
+                item.Value(func(val []byte) error </span><span class="cov1" title="1">{
+                        data = val
+                        return nil
+                }</span>)
+                <span class="cov1" title="1">return err</span>
+        })
+        <span class="cov1" title="1">return data</span>
+}
+
+func (r *CacheProvider) Set(key string, value string) error <span class="cov1" title="1">{
+        err := r.cache.Update(func(txn *badger.Txn) error </span><span class="cov1" title="1">{
+                return txn.Set([]byte(key), []byte(value))
+        }</span>)
+        <span class="cov1" title="1">return err</span>
+}
+
+func GetCacheProvider() *CacheProvider <span class="cov10" title="4">{
+
+        onceCache.Do(func() </span><span class="cov1" title="1">{
+                cacheProivder = new(CacheProvider)
+                cache, err := cacheProivder.InitDB()
+                fmt.Println(err)
+                cacheProivder.cache = cache
+        }</span>)
+
+        <span class="cov10" title="4">return cacheProivder</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package jwt
+
+import (
+        objectValues "service-user/internal/domain/object_values"
+        "time"
+
+        "github.com/golang-jwt/jwt"
+        "github.com/labstack/echo/v4/middleware"
+)
+
+func NewJwtClient() JwtClient <span class="cov10" title="5">{
+        return JwtClient{}
+}</span>
+
+type JwtClient struct{}
+
+func (j *JwtClient) GenerateToken(entityJWT objectValues.JwtEntity) (string, error) <span class="cov0" title="0">{
+        claims := objectValues.JwtCustomClaims{
+                Nombres:   entityJWT.Nombres,
+                Apellidos: entityJWT.Apellidos,
+                Correo:    entityJWT.Correo,
+                Id:        entityJWT.Id,
+                StandardClaims: jwt.StandardClaims{
+                        ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+                },
+        }
+        // Create token with claims
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+        // Generate encoded token and send it as response.
+        return token.SignedString([]byte("secret"))
+
+}</span>
+
+func (j *JwtClient) GetConfig() middleware.JWTConfig <span class="cov1" title="1">{
+        config := middleware.JWTConfig{
+                Claims:     &amp;objectValues.JwtCustomClaims{},
+                SigningKey: []byte("secret"),
+        }
+        return config
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package validator
+
+import (
+        "log"
+        "strings"
+        "sync"
+
+        "github.com/go-playground/locales/es"
+        ut "github.com/go-playground/universal-translator"
+        "github.com/go-playground/validator/v10"
+        es_translation "github.com/go-playground/validator/v10/translations/es"
+)
+
+var once sync.Once
+
+var validate *validator.Validate
+var trans ut.Translator
+
+func NewValidator() *validator.Validate <span class="cov4" title="2">{
+        once.Do(func() </span><span class="cov1" title="1">{
+                validate = validator.New()
+                es := es.New()
+                uni := ut.New(es, es)
+
+                trans, found := uni.GetTranslator("es")
+                if !found </span><span class="cov0" title="0">{
+                        log.Fatal("Traductor no encontrado")
+                }</span>
+                <span class="cov1" title="1">if err := es_translation.RegisterDefaultTranslations(validate, trans); err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                }</span>
+        })
+        <span class="cov4" title="2">return validate</span>
+}
+
+type Error struct {
+        Key     string
+        Message string
+}
+
+func GenerateMessage(v *validator.Validate, errs validator.ValidationErrors) []Error <span class="cov4" title="2">{
+
+        var errors []Error
+
+        for _, e := range errs </span><span class="cov10" title="8">{
+                error := Error{
+                        Key:     strings.Split(e.Translate(trans), " ")[1],
+                        Message: e.Translate((trans)),
+                }
+                errors = append(errors, error)
+        }</span>
+
+        <span class="cov4" title="2">return errors</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">// Code generated by mockery v2.27.1. DO NOT EDIT.
+
+package mocks
+
+import (
+        rest "github.com/sendgrid/rest"
+        mock "github.com/stretchr/testify/mock"
+)
+
+// ClientRest is an autogenerated mock type for the ClientRest type
+type ClientRest struct {
+        mock.Mock
+}
+
+// Delete provides a mock function with given fields: endpoint, body
+func (_m *ClientRest) Delete(endpoint string, body interface{}) (*rest.Response, error) <span class="cov0" title="0">{
+        ret := _m.Called(endpoint, body)
+
+        var r0 *rest.Response
+        var r1 error
+        if rf, ok := ret.Get(0).(func(string, interface{}) (*rest.Response, error)); ok </span><span class="cov0" title="0">{
+                return rf(endpoint, body)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(string, interface{}) *rest.Response); ok </span><span class="cov0" title="0">{
+                r0 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*rest.Response)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(string, interface{}) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// Get provides a mock function with given fields: endpoint
+func (_m *ClientRest) Get(endpoint string) (*rest.Response, error) <span class="cov0" title="0">{
+        ret := _m.Called(endpoint)
+
+        var r0 *rest.Response
+        var r1 error
+        if rf, ok := ret.Get(0).(func(string) (*rest.Response, error)); ok </span><span class="cov0" title="0">{
+                return rf(endpoint)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(string) *rest.Response); ok </span><span class="cov0" title="0">{
+                r0 = rf(endpoint)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*rest.Response)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(endpoint)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// Post provides a mock function with given fields: endpoint, body
+func (_m *ClientRest) Post(endpoint string, body interface{}) (*rest.Response, error) <span class="cov0" title="0">{
+        ret := _m.Called(endpoint, body)
+
+        var r0 *rest.Response
+        var r1 error
+        if rf, ok := ret.Get(0).(func(string, interface{}) (*rest.Response, error)); ok </span><span class="cov0" title="0">{
+                return rf(endpoint, body)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(string, interface{}) *rest.Response); ok </span><span class="cov0" title="0">{
+                r0 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*rest.Response)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(string, interface{}) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// Put provides a mock function with given fields: endpoint, body
+func (_m *ClientRest) Put(endpoint string, body interface{}) (*rest.Response, error) <span class="cov0" title="0">{
+        ret := _m.Called(endpoint, body)
+
+        var r0 *rest.Response
+        var r1 error
+        if rf, ok := ret.Get(0).(func(string, interface{}) (*rest.Response, error)); ok </span><span class="cov0" title="0">{
+                return rf(endpoint, body)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(string, interface{}) *rest.Response); ok </span><span class="cov0" title="0">{
+                r0 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*rest.Response)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(string, interface{}) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(endpoint, body)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+type mockConstructorTestingTNewClientRest interface {
+        mock.TestingT
+        Cleanup(func())
+}
+
+// NewClientRest creates a new instance of ClientRest. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+func NewClientRest(t mockConstructorTestingTNewClientRest) *ClientRest <span class="cov0" title="0">{
+        mock := &amp;ClientRest{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov0" title="0">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov0" title="0">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">// Code generated by mockery v2.27.1. DO NOT EDIT.
+
+package mocks
+
+import (
+        entity "service-user/internal/domain/entity"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// IRepositoryProgress is an autogenerated mock type for the IRepositoryProgress type
+type IRepositoryProgress struct {
+        mock.Mock
+}
+
+// FindProgressByUser provides a mock function with given fields: idUser
+func (_m *IRepositoryProgress) FindProgressByUser(idUser uint64) ([]entity.Progress, error) <span class="cov4" title="2">{
+        ret := _m.Called(idUser)
+
+        var r0 []entity.Progress
+        var r1 error
+        if rf, ok := ret.Get(0).(func(uint64) ([]entity.Progress, error)); ok </span><span class="cov0" title="0">{
+                return rf(idUser)
+        }</span>
+        <span class="cov4" title="2">if rf, ok := ret.Get(0).(func(uint64) []entity.Progress); ok </span><span class="cov0" title="0">{
+                r0 = rf(idUser)
+        }</span> else<span class="cov4" title="2"> {
+                if ret.Get(0) != nil </span><span class="cov1" title="1">{
+                        r0 = ret.Get(0).([]entity.Progress)
+                }</span>
+        }
+
+        <span class="cov4" title="2">if rf, ok := ret.Get(1).(func(uint64) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(idUser)
+        }</span> else<span class="cov4" title="2"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov4" title="2">return r0, r1</span>
+}
+
+// FindProgressByUserAndCategory provides a mock function with given fields: idUser, idCategory
+func (_m *IRepositoryProgress) FindProgressByUserAndCategory(idUser uint64, idCategory uint64) (*entity.Progress, error) <span class="cov7" title="3">{
+        ret := _m.Called(idUser, idCategory)
+
+        var r0 *entity.Progress
+        var r1 error
+        if rf, ok := ret.Get(0).(func(uint64, uint64) (*entity.Progress, error)); ok </span><span class="cov0" title="0">{
+                return rf(idUser, idCategory)
+        }</span>
+        <span class="cov7" title="3">if rf, ok := ret.Get(0).(func(uint64, uint64) *entity.Progress); ok </span><span class="cov0" title="0">{
+                r0 = rf(idUser, idCategory)
+        }</span> else<span class="cov7" title="3"> {
+                if ret.Get(0) != nil </span><span class="cov7" title="3">{
+                        r0 = ret.Get(0).(*entity.Progress)
+                }</span>
+        }
+
+        <span class="cov7" title="3">if rf, ok := ret.Get(1).(func(uint64, uint64) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(idUser, idCategory)
+        }</span> else<span class="cov7" title="3"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov7" title="3">return r0, r1</span>
+}
+
+// RegisterProgress provides a mock function with given fields: progress
+func (_m *IRepositoryProgress) RegisterProgress(progress entity.Progress) (*entity.Progress, error) <span class="cov4" title="2">{
+        ret := _m.Called(progress)
+
+        var r0 *entity.Progress
+        var r1 error
+        if rf, ok := ret.Get(0).(func(entity.Progress) (*entity.Progress, error)); ok </span><span class="cov0" title="0">{
+                return rf(progress)
+        }</span>
+        <span class="cov4" title="2">if rf, ok := ret.Get(0).(func(entity.Progress) *entity.Progress); ok </span><span class="cov0" title="0">{
+                r0 = rf(progress)
+        }</span> else<span class="cov4" title="2"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*entity.Progress)
+                }</span>
+        }
+
+        <span class="cov4" title="2">if rf, ok := ret.Get(1).(func(entity.Progress) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(progress)
+        }</span> else<span class="cov4" title="2"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov4" title="2">return r0, r1</span>
+}
+
+// UpdateProgress provides a mock function with given fields: progress
+func (_m *IRepositoryProgress) UpdateProgress(progress entity.Progress) (*entity.Progress, error) <span class="cov1" title="1">{
+        ret := _m.Called(progress)
+
+        var r0 *entity.Progress
+        var r1 error
+        if rf, ok := ret.Get(0).(func(entity.Progress) (*entity.Progress, error)); ok </span><span class="cov0" title="0">{
+                return rf(progress)
+        }</span>
+        <span class="cov1" title="1">if rf, ok := ret.Get(0).(func(entity.Progress) *entity.Progress); ok </span><span class="cov0" title="0">{
+                r0 = rf(progress)
+        }</span> else<span class="cov1" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*entity.Progress)
+                }</span>
+        }
+
+        <span class="cov1" title="1">if rf, ok := ret.Get(1).(func(entity.Progress) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(progress)
+        }</span> else<span class="cov1" title="1"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov1" title="1">return r0, r1</span>
+}
+
+type mockConstructorTestingTNewIRepositoryProgress interface {
+        mock.TestingT
+        Cleanup(func())
+}
+
+// NewIRepositoryProgress creates a new instance of IRepositoryProgress. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+func NewIRepositoryProgress(t mockConstructorTestingTNewIRepositoryProgress) *IRepositoryProgress <span class="cov10" title="5">{
+        mock := &amp;IRepositoryProgress{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="5">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="5">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">// Code generated by mockery v2.27.1. DO NOT EDIT.
+
+package mocks
+
+import (
+        entity "service-user/internal/domain/entity"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// IRepositoryUser is an autogenerated mock type for the IRepositoryUser type
+type IRepositoryUser struct {
+        mock.Mock
+}
+
+// FindUserByEmailAndPassword provides a mock function with given fields: email, pass
+func (_m *IRepositoryUser) FindUserByEmailAndPassword(email string, pass string) *entity.User <span class="cov0" title="0">{
+        ret := _m.Called(email, pass)
+
+        var r0 *entity.User
+        if rf, ok := ret.Get(0).(func(string, string) *entity.User); ok </span><span class="cov0" title="0">{
+                r0 = rf(email, pass)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*entity.User)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// RegisterUser provides a mock function with given fields: user
+func (_m *IRepositoryUser) RegisterUser(user entity.User) (*entity.User, error) <span class="cov5" title="2">{
+        ret := _m.Called(user)
+
+        var r0 *entity.User
+        var r1 error
+        if rf, ok := ret.Get(0).(func(entity.User) (*entity.User, error)); ok </span><span class="cov0" title="0">{
+                return rf(user)
+        }</span>
+        <span class="cov5" title="2">if rf, ok := ret.Get(0).(func(entity.User) *entity.User); ok </span><span class="cov0" title="0">{
+                r0 = rf(user)
+        }</span> else<span class="cov5" title="2"> {
+                if ret.Get(0) != nil </span><span class="cov5" title="2">{
+                        r0 = ret.Get(0).(*entity.User)
+                }</span>
+        }
+
+        <span class="cov5" title="2">if rf, ok := ret.Get(1).(func(entity.User) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(user)
+        }</span> else<span class="cov5" title="2"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov5" title="2">return r0, r1</span>
+}
+
+// UpdateUser provides a mock function with given fields: user
+func (_m *IRepositoryUser) UpdateUser(user entity.User) (*entity.User, error) <span class="cov0" title="0">{
+        ret := _m.Called(user)
+
+        var r0 *entity.User
+        var r1 error
+        if rf, ok := ret.Get(0).(func(entity.User) (*entity.User, error)); ok </span><span class="cov0" title="0">{
+                return rf(user)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(entity.User) *entity.User); ok </span><span class="cov0" title="0">{
+                r0 = rf(user)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(*entity.User)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(entity.User) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(user)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+type mockConstructorTestingTNewIRepositoryUser interface {
+        mock.TestingT
+        Cleanup(func())
+}
+
+// NewIRepositoryUser creates a new instance of IRepositoryUser. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+func NewIRepositoryUser(t mockConstructorTestingTNewIRepositoryUser) *IRepositoryUser <span class="cov10" title="4">{
+        mock := &amp;IRepositoryUser{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="4">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="4">return mock</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

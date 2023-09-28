@@ -12,6 +12,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func ValidateProgress(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		v := validatorPer.NewValidator()
+		progress := new(entity.Progress)
+
+		_ = c.Bind(&progress)
+		if err := v.Struct(progress); err != nil {
+			errs := err.(validatorV.ValidationErrors)
+			return c.JSON(http.StatusBadRequest, validatorPer.GenerateMessage(v, errs))
+		}
+		c.Set("progress", progress)
+		return next(c)
+	}
+}
+
 func ValidateUser(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		v := validatorPer.NewValidator()

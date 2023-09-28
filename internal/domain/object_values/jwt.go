@@ -1,6 +1,8 @@
 package objectValues
 
-import "github.com/golang-jwt/jwt"
+import (
+	"github.com/golang-jwt/jwt"
+)
 
 type JwtCustomClaims struct {
 	Id        uint64 `json:"id"`

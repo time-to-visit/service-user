@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "expo-linking": "^4.0.1"
+  }
+}

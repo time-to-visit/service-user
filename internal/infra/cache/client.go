@@ -2,6 +2,8 @@ package cache
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/dgraph-io/badger"
@@ -10,11 +12,29 @@ import (
 var onceCache sync.Once
 var cacheProivder *CacheProvider
 
+func deleteFolder() error {
+	err := filepath.Walk("data/cache", func(ruta string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			err = os.Remove(ruta)
+			if err != nil {
+				return err
+			}
+			fmt.Println("Archivo borrado:", ruta)
+		}
+		return nil
+	})
+	return err
+}
+
 type CacheProvider struct {
 	cache *badger.DB
 }
 
 func (r *CacheProvider) InitDB() (*badger.DB, error) {
+	deleteFolder()
 	opts := badger.DefaultOptions("")
 	opts.Dir = "data/cache"
 	opts.ValueDir = "data/cache"

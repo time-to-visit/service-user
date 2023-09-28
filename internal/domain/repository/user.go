@@ -9,7 +9,7 @@ import (
 type IRepositoryUser interface {
 	RegisterUser(user entity.User) (*entity.User, error)
 	UpdateUser(user entity.User) (*entity.User, error)
-	FindUserByEmailAndPassword(email string, pass string) *entity.User
+	FindUserByEmailAndPassword(email string) *entity.User
 }
 
 func NewRepositoryUser(db *gorm.DB) IRepositoryUser {
@@ -33,8 +33,8 @@ func (r *repositoryUser) UpdateUser(user entity.User) (*entity.User, error) {
 
 }
 
-func (r *repositoryUser) FindUserByEmailAndPassword(email string, pass string) *entity.User {
+func (r *repositoryUser) FindUserByEmailAndPassword(email string) *entity.User {
 	var user entity.User
-	r.db.First(&user, "correo = ? and clave = ?", email, pass)
+	r.db.First(&user, "correo = ? ", email)
 	return &user
 }

@@ -29,7 +29,7 @@ func Run(configPath string) {
 	e.Use(middleware.Recover())
 	conf := GetConfig()
 	setupDB(conf)
-	ioc := genIoc()
-	e = handler.NewHandlerUser(e, ioc)
+	user, progress := genIoc()
+	e = handler.NewHandlerUser(e, user, progress)
 	e.Logger.Fatal(e.Start(":" + conf.Server.Port))
 }
