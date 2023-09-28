@@ -14,13 +14,13 @@ func NewHandlerUser(e *echo.Echo, userUseCase usecase.UserUseCase, progressUseCa
 	userEntry := entry.NewUserEntry(userUseCase)
 	progressEntry := entry.NewProgressEntry(progressUseCase)
 	jwtConf := jwt.NewJwtClient()
-	e.POST("/register", userEntry.Register, validator.ValidateUser)
-	e.POST("/verify", userEntry.Verify, middleware.JWTWithConfig(jwtConf.GetConfig()))
-	e.POST("/auth", userEntry.Auth, validator.ValidateVerify)
-	e.POST("/verify-email", userEntry.VerifyEmail)
-	e.GET("/verify-email", userEntry.VerifyEmailView)
-	e.POST("/send-email", userEntry.SendEmail)
-	e.POST("/progress", progressEntry.Register, validator.ValidateProgress)
+	e.POST("/user/register", userEntry.Register, validator.ValidateUser)
+	e.POST("/user/verify", userEntry.Verify, middleware.JWTWithConfig(jwtConf.GetConfig()))
+	e.POST("/user/auth", userEntry.Auth, validator.ValidateVerify)
+	e.POST("/user/verify-email", userEntry.VerifyEmail)
+	e.GET("/user/verify-email", userEntry.VerifyEmailView)
+	e.POST("/user/send-email", userEntry.SendEmail)
+	e.POST("/user/progress", progressEntry.Register, validator.ValidateProgress)
 
 	return e
 }
